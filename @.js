@@ -435,8 +435,8 @@ async function rand() {
 		'User-Agent':  uas,
 		...rateHeaders[Math.floor(Math.random() * rateHeaders.length)],
 		...rateHeaders2[Math.floor(Math.random() * rateHeaders.length)],
-...val,
-...pro,
+
+
 		
 					  };
 					}else if (browser === 'firefox'){
@@ -447,8 +447,7 @@ async function rand() {
 							'User-Agent':  uass,
 							...rateHeaders[Math.floor(Math.random() * rateHeaders.length)],
 							...rateHeaders2[Math.floor(Math.random() * rateHeaders.length)],
-...val,
-...pro,
+
 										  };
 					} else if (browser === 'edge') {
 						
@@ -458,8 +457,7 @@ async function rand() {
 							...rateHeaders[Math.floor(Math.random() * rateHeaders.length)],
 							...rateHeaders2[Math.floor(Math.random() * rateHeaders.length)],
 							'User-Agent':  ua1,
-...val,
-...pro,
+
 										  };
 					} else if (browser === 'linux') {
 						dynHeaders = {
@@ -469,8 +467,7 @@ async function rand() {
 							'User-Agent':  uas,
 							...rateHeaders2[Math.floor(Math.random() * rateHeaders.length)],
 							...hd[Math.floor(Math.random() * hd.length)], 
-...val,
-...pro,
+
 										  };
 					} else if (browser === 'opera') {
 						dynHeaders = {
@@ -480,8 +477,7 @@ async function rand() {
 							'User-Agent':  ua2,
 							...rateHeaders2[Math.floor(Math.random() * rateHeaders.length)],
 							...hd[Math.floor(Math.random() * hd.length)], 
-...val,
-...pro,
+
                                };
 					} else if (browser === 'macos') {
 						dynHeaders = {
@@ -491,8 +487,7 @@ async function rand() {
 							'User-Agent':  uas,
 							...rateHeaders2[Math.floor(Math.random() * rateHeaders.length)],
 							...hd[Math.floor(Math.random() * hd.length)], 
-...val,
-...pro,
+
 										  };
 					} else if (browser === 'brave') {
 						dynHeaders = {
@@ -503,8 +498,7 @@ async function rand() {
 							...rateHeaders2[Math.floor(Math.random() * rateHeaders.length)],
 							...hd[Math.floor(Math.random() * hd.length)], 
                    ...braveHeaders[Math.floor(Math.random() * braveHeaders.length)],
-...val,
-...pro,
+
 										  };
 					} else {
 						dynHeaders = {
@@ -513,8 +507,7 @@ async function rand() {
 							'User-Agent':  uas,
 							...rateHeaders[Math.floor(Math.random() * rateHeaders.length)],
 							...rateHeaders2[Math.floor(Math.random() * rateHeaders.length)],
-...val,
-...pro,
+
 										  };
 					}
 					return dynHeaders
@@ -522,55 +515,55 @@ async function rand() {
 }
 rand()
                 
-	const agent = await new http.Agent({
+	const agent = new http.Agent({
 		host: proxy[0]
 		, port: proxy[1]
 		, keepAlive: true
-      , keepAliveMsecs: Infinity
-      , maxSockets: Infinity
-      , maxFreeSockets: Infinity
-      , timeout: 5000
-      , freeSocketTimeout: 10000
+		, keepAliveMsecs: 500000000
+		, maxSockets: 50000
+		, maxTotalSockets: 100000
 	, });
 	const Optionsreq = {
 		agent: agent
 		, method: 'CONNECT'
 		, path: parsed.host + ':443'
-		, timeout: 30000
+		, timeout: 5000
 		, headers: {
 			'Host': parsed.host
 			, 'Proxy-Connection': 'Keep-Alive'
-			, 'Connection': 'Keep-Alive'
-			, 'Proxy-Authorization': `Basic ${Buffer.from(`${proxy[2]}:${proxy[3]}`).toString('base64')}`
-         ,'User-Agent': uas
-		,}
+			, 'Connection': 'close'
+		, 'Proxy-Authorization': `Basic ${Buffer.from(`${proxy[2]}:${proxy[3]}`).toString('base64')}`
+    ,}
 	, };
-	connection = await http.request(Optionsreq, (res) => {});
- connection.on('error', (err) => {
- 
- if (err) return
-});
- connection.on('timeout', async () => {
-		return
-		});
+	connection = http.request(Optionsreq, (res) => {});
 	const TLSOPTION = {
 		ciphers: cipper
-		, secureProtocol:['TLSv1_3_method'] 
+		, minVersion: 'TLSv1.2'
+    ,maxVersion: 'TLSv1.3'
+		, sigals: sig
+		, secureOptions: crypto.constants.SSL_OP_NO_RENEGOTIATION | crypto.constants.SSL_OP_NO_TICKET | crypto.constants.SSL_OP_NO_SSLv2 | crypto.constants.SSL_OP_NO_SSLv3 | crypto.constants.SSL_OP_NO_COMPRESSION | crypto.constants.SSL_OP_NO_RENEGOTIATION | crypto.constants.SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION | crypto.constants.SSL_OP_TLSEXT_PADDING | crypto.constants.SSL_OP_ALL | crypto.constants.SSLcom
 		, echdCurve: "X25519"
+    ,maxRedirects: 20
+    ,followAllRedirects: true
 		, secure: true
 		, rejectUnauthorized: false
 		, ALPNProtocols: ['h2']
 	, };
 
-	async function createCustomTLSSocket(parsed, socket) {
-		const tlsSocket = await tls.connect({
+	function createCustomTLSSocket(parsed, socket) {
+    const tlsSocket = tls.connect({
 			...TLSOPTION
 			, host: parsed.host
 			, port: 443
 			, servername: parsed.host
 			, socket: socket
 		});
-		return tlsSocket;
+		tlsSocket.setKeepAlive(true, 60000);
+    tlsSocket.allowHalfOpen = true;
+    tlsSocket.setNoDelay(true);
+    tlsSocket.setMaxListeners(0);
+
+    return tlsSocket;
 	}
 	function generateJA3Fingerprint(socket) {
 		const cipherInfo = socket.getCipher();
