@@ -211,7 +211,7 @@ const secureOptions =
  var proxies = readLines(args.proxyFile);
  const parsedTarget = url.parse(args.target);
 
- const MAX_RAM_PERCENTAGE = 80;
+ const MAX_RAM_PERCENTAGE = 95;
 const RESTART_DELAY = 1000;
 
  if (cluster.isMaster) {
